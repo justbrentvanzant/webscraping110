@@ -3,7 +3,7 @@ import pandas as pd
 import time
 
 ##9:24
-WAIT_CONST = 2;
+WAIT_CONST = 0.01;
 #open up firefox emulator.
 driver = webdriver.Firefox()
 
@@ -32,12 +32,13 @@ for entry in entries:
 		urls.append(href)
 df = pd.DataFrame(total,columns=['clubName','pageID'])
 df.to_csv('clubInformationScraped.csv')
+totals = []
 for url in urls:
 	print("href: "+url)
 	driver.get(url)
-	time.sleep(WAIT_CONST)
+	time.sleep(0.1)
 	items = len(driver.find_elements_by_tag_name("tr"))
-	totals = []
+
 	firstDescr = True
 	secondDescr = True
 	descriptions = driver.find_elements_by_tag_name("dd")
@@ -46,12 +47,12 @@ for url in urls:
 			firstDescr = False
 		elif secondDescr:
 			purpose = description.text
-			new = (purpose)
+			new = ((url,purpose))
 			totals.append(new)
 			secondDescr = False
-			print(purpose)
-df = pd.DataFrame(totals,columns=['clubPurpose'])
-df.to_csv('clubPurposeScraped.csv')
+	df = pd.DataFrame(totals,columns=['clubUrl','clubPurpose'])
+	df.to_csv('clubPurposeScraped.csv')
+
 driver.close();
 """
 
